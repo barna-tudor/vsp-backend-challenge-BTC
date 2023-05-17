@@ -12,14 +12,16 @@ import java.time.LocalDate
 import java.time.format.DateTimeParseException
 import org.json.*
 
-fun Route.jsonDisplayRouting() {
-    val client = HttpClient(OkHttp) {
-        engine {
-            config {
-                followRedirects(true)
-            }
-        }
-    }
+
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.http.FileContent
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
+import java.io.File
+
+
+fun Route.jsonDisplayRouting(client: HttpClient) {
 
     fun modifyJson(it: Any) {
         it as JSONObject
@@ -28,20 +30,15 @@ fun Route.jsonDisplayRouting() {
         it.remove("content")
     }
     route("/viewData") {
+        get("/temporary") {
+
+        }
         get {
             val xmlFileRawText = client.get("https://www.bnr.ro/nbrfxrates.xml").bodyAsText()
             val jsonOfRatesByDate = XML.toJSONObject(xmlFileRawText)
                 .getJSONObject("DataSet").getJSONObject("Body").getJSONObject("Cube").getJSONArray("Rate")
-            /*jsonOfRatesByDate.forEach {
-                it as JSONObject
-                it.put(it.getString("currency"), it.getDouble("content"))
-                it.remove("currency")
-                it.remove("content")
-            }
-            */
             jsonOfRatesByDate.forEach(::modifyJson)
             call.respondText(jsonOfRatesByDate.toString())
-            /* TODO: parse as json */
         }
         get(Regex("/(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})")) {
             //input validation
@@ -85,7 +82,6 @@ fun Route.jsonDisplayRouting() {
             }
             targetJSONObject.forEach(::modifyJson)
             call.respondText(targetJSONObject.toString())
-
         }
     }
 }
