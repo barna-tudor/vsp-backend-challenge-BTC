@@ -24,16 +24,12 @@ suspend fun checkIfUserExists(email: String): Boolean {
 }
 
 suspend fun checkPasswordForEmail(email: String, passwordToCheck: String): Boolean {
+    // if email is registered, find corresponding password, else return false
     val actualPassword = users.findOne(User::email eq email)?.password ?: return false
+    // check if input pass matches stored password
     return checkHashForPassword(passwordToCheck, actualPassword)
 }
 
-fun getHashWithSalt(stringToHash: String, saltLength: Int = 32): String {
-    val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLength)
-    val saltAsHex = Hex.encodeHexString(salt)
-    val hash = DigestUtils.sha256Hex("$saltAsHex$stringToHash")
-    return "$saltAsHex:$hash"
-}
 
 fun checkHashForPassword(password: String, hashWithSalt: String): Boolean {
     val hashAndSalt = hashWithSalt.split(":")
@@ -41,6 +37,13 @@ fun checkHashForPassword(password: String, hashWithSalt: String): Boolean {
     val hash = hashAndSalt[1]
     val passwordHash = DigestUtils.sha256Hex("$salt$password")
     return hash == passwordHash
+}
+
+fun getHashWithSalt(stringToHash: String, saltLength: Int = 32): String {
+    val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLength)
+    val saltAsHex = Hex.encodeHexString(salt)
+    val hash = DigestUtils.sha256Hex("$saltAsHex$stringToHash")
+    return "$saltAsHex:$hash"
 }
 
 fun Application.configureSecurity() {

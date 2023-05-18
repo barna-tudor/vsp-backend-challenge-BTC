@@ -2,6 +2,7 @@
 
 package com.example
 
+// Deprecated, but still in the OAuth2.0 usage documentation
 import com.example.models.ConfigModel
 import com.example.models.currentConfig
 import com.example.plugins.configureRouting
@@ -38,6 +39,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
+    // Preparing variables on launch
     val client = HttpClient(OkHttp) {
         engine {
             config {
@@ -52,12 +54,13 @@ fun Application.module() {
     val credential: GoogleCredential =
         GoogleCredential.fromStream(FileInputStream("src/main/resources/serviceAccCred.json")).createScoped(SCOPES)
     val service = Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build()
-    val folderId = "1wCLLGXa-C_2v8200G_Ltf-rb1bSacItm"
+    val folderId = java.io.File("src/main/resources/folderID.txt").readText()
+    // setup routes + login
     configureSecurity()
     configureSerialization()
     configureRouting(client)
-
     loadConfigFromFile()
+    // daily task
     val scheduler = Scheduler {
         launch(Dispatchers.IO) {
             writeDailyFiles(client, service, folderId)
@@ -85,19 +88,22 @@ suspend fun writeDailyFiles(
             .getJSONArray("Rate")
     //
     val configJSONObject = JSONObject(currentConfig)
+    // For Each Currency,
     jsonOfRates.forEach {
         it as JSONObject
-        if (!configJSONObject.getBoolean(it.getString("currency"))) {
-            it.clear()
-        } else {
+        // Check if  currency is true in currentConfig
+        if (configJSONObject.getBoolean(it.getString("currency"))) {
+            // prepare file
             val fileMetadata = File()
-            fileMetadata.name = LocalDate.now().toString() + it.getString("currency") + ".json"
+            fileMetadata.name = LocalDate.now().toString() + "-" + it.getString("currency") + ".json"
             fileMetadata.parents = Collections.singletonList(folderId)
+            // prepare contents
             it.put(it.getString("currency"), it.getDouble("content"))
             it.remove("currency")
             it.remove("content")
             java.io.File("src/main/resources/dailyContent.json").writeText(it.toString())
             val fileContent = FileContent("application/json", java.io.File("src/main/resources/dailyContent.json"))
+            // Google Drive create file API call
             try {
                 service.files().create(fileMetadata, fileContent).setFields("id, parents").execute()
             } catch (e: GoogleJsonResponseException) {
@@ -106,6 +112,8 @@ suspend fun writeDailyFiles(
             }
         }
     }
+    // reset dailyContent file
+    java.io.File("src/main/resources/dailyContent.json").writeText("")
 }
 
 

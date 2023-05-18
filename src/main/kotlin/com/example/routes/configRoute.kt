@@ -17,6 +17,7 @@ fun Route.configRoute() {
                 try {
                     val config = call.receive<ConfigModel>()
                     currentConfig = config
+                    //update local config, in case of service shutdown
                     java.io.File("src/main/resources/currentConfig.json")
                         .writeText(JSONObject(currentConfig).toString())
                 } catch (e: ContentTransformationException) {

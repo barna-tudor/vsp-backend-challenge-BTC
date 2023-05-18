@@ -13,14 +13,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.AuthRoute() {
+fun Route.authRoute() {
     route("/register") {
         post {
             val request = try {
                 call.receive<AccountRequest>()
             } catch (e: ContentTransformationException) {
-                call.respond(BadRequest)
-                return@post
+                return@post call.respond(BadRequest)
             }
             val userExists = checkIfUserExists(request.email)
             if (!userExists) {
@@ -34,13 +33,13 @@ fun Route.AuthRoute() {
             }
         }
     }
+    // Only used for testing, does nothing by itself
     route("/login") {
         post {
             val request = try {
                 call.receive<AccountRequest>()
             } catch (e: ContentTransformationException) {
-                call.respond(BadRequest)
-                return@post
+                return@post call.respond(BadRequest)
             }
             val isPasswordCorrect = checkPasswordForEmail(request.email, request.password)
             if (isPasswordCorrect) {

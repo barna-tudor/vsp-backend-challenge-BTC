@@ -36,5 +36,5 @@ data class ConfigModel(
     val XDR: Boolean = false,
     val ZAR: Boolean = false
 )
-
+// in-memory configuration
 var currentConfig = ConfigModel()
