@@ -1,6 +1,6 @@
 # README
 API made in Kotlin using Ktor and the Google Drive API.
-Login database made using mongoDB, named `UserDB`, mongoDB port `27017`
+Login database made using mongoDB, named `UserDB`, 
 
 ## Pre-launch set-up
 
@@ -16,7 +16,7 @@ It then creates a file for each currency configured, named `yyyy-mm-dd-CSH.json`
 The file content is `{"CSH":value}`. 
 
 By default, all 31 currencies included in the endpoint at the time of project creation will be used.
-To change this, either manually adjust the `currentConfig.json` file found under `src/main/resources` or through the `/configureCurrencies` endpoint (requires authetication)
+To change which currencies are saved, either manually adjust the `currentConfig.json` file found under `src/main/resources` or through the `/configureCurrencies` endpoint (requires authetication)
 
 ## Endpoints
 The main 2 endpoints (`/viewData` and `/configureCurrencies`) require a basic auth header.
@@ -29,17 +29,18 @@ To register a user, send a POST request to `/register`. The body must be a Json 
 }
 ```
 
-First required enpoint is `/viewData`
+First required endpoint is `/viewData`
 By default, returns a String representing a Json of type
 ```json
 [
-  {"CSH" : 0.000},
-  {"CSH" : 0.000}
+  {"CSH1" : 1.234},
+  {"CSH2" : 5.679}
 ]
 ```
 representing today's rates.
 
 Additionally, consuming `/viewData/yyyy-mm-dd` returns a similar String, representing the rates at the imputed time.
+Inputting an invalid date (Future or non-sensical e.g. `2020-16-35` returns a BadRequest)
 
 Second endpoint, `/configureCurrencies` receives a POST with body of type application/json of format
 ```json
