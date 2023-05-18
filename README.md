@@ -29,6 +29,7 @@ To register a user, send a POST request to `/register`. The body must be a Json 
   "password" : "testingpassword" 
 }
 ```
+The passwords are stored hashed and salted.
 
 First required endpoint is `/viewData`
 By default, returns a String representing a Json of type
