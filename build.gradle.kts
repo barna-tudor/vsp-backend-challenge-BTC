@@ -35,5 +35,7 @@ dependencies {
     implementation("org.json:json:20230227")
     implementation("com.google.api-client:google-api-client:2.0.0")
     implementation("com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0")
-
+    implementation ("org.litote.kmongo:kmongo:4.9.0")
+    implementation("org.litote.kmongo:kmongo-coroutine:4.9.0")
+    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
 }

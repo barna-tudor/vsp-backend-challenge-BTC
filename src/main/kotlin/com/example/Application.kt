@@ -2,7 +2,7 @@
 
 package com.example
 
-import com.example.models.configModel
+import com.example.models.ConfigModel
 import com.example.models.currentConfig
 import com.example.plugins.configureRouting
 import com.example.plugins.configureSerialization
@@ -53,8 +53,10 @@ fun Application.module() {
         GoogleCredential.fromStream(FileInputStream("src/main/resources/serviceAccCred.json")).createScoped(SCOPES)
     val service = Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build()
     val folderId = "1wCLLGXa-C_2v8200G_Ltf-rb1bSacItm"
+    configureSecurity()
     configureSerialization()
     configureRouting(client)
+
     loadConfigFromFile()
     val scheduler = Scheduler {
         launch(Dispatchers.IO) {
@@ -66,7 +68,7 @@ fun Application.module() {
 
 fun loadConfigFromFile() {
     val configString = java.io.File("src/main/resources/currentConfig.json").readText()
-    currentConfig = Json.decodeFromString<configModel>(configString)
+    currentConfig = Json.decodeFromString<ConfigModel>(configString)
 }
 
 suspend fun writeDailyFiles(
@@ -120,6 +122,7 @@ class Scheduler(private val task: Runnable) {
             TimeUnit.MILLISECONDS
         )
     }
+
     fun stop() {
         executor.shutdown()
         try {

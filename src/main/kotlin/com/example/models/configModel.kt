@@ -3,7 +3,7 @@ package com.example.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class configModel(
+data class ConfigModel(
     val AED: Boolean = false,
     val AUD: Boolean = false,
     val BGN: Boolean = false,
@@ -37,4 +37,4 @@ data class configModel(
     val ZAR: Boolean = false
 )
 
-var currentConfig = configModel()
+var currentConfig = ConfigModel()
