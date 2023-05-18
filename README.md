@@ -8,6 +8,7 @@ Login database made using mongoDB, named `UserDB`,
 2. Save the key as a Json named `serviceAccCred.json`, placed in `src/main/resources/`
 3. Create a folder inside a Google Drive, and share it to the e-mail address of the Service Account created at step 1
 4. Copy the folder id to a file `folderID.txt` placed in `src/main/resources/`.
+5. Set up a mongoDB database called `UserDB`
 
 ## Functionality
 
