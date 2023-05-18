@@ -33,9 +33,8 @@ First required enpoint is `/viewData`
 By default, returns a String representing a Json of type
 ```json
 [
-  {"CSH" : value},
-  {"CSH" : value}, 
-       {...}
+  {"CSH" : 0.000},
+  {"CSH" : 0.000}
 ]
 ```
 representing today's rates.
@@ -45,9 +44,8 @@ Additionally, consuming `/viewData/yyyy-mm-dd` returns a similar String, represe
 Second endpoint, `/configureCurrencies` receives a POST with body of type application/json of format
 ```json
 {
-  "CSH" : true,
-  "CSH" : false,
-       ...
+  "CSH1" : true,
+  "CSH2" : false
 }
 ```
 Any currency not specified in the body is defaulted to `false`.
